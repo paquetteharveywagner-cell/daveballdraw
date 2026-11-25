@@ -10,6 +10,7 @@ const PORT = Number(process.env.PORT) || 10000;
 const ROOT = __dirname;
 
 const BACKEND_ASSETS = new Map([
+  ["/", "admin.html"],
   ["/admin", "admin.html"],
   ["/admin.html", "admin.html"],
   ["/admin.js", "admin.js"],
@@ -68,7 +69,7 @@ const server = http.createServer(async (req, res) => {
   const wrappedRes = wrapResponse(res);
 
   try {
-    if (urlPath === "/" || urlPath === "/health") {
+    if (urlPath === "/health") {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Cache-Control", "no-store");
       return wrappedRes.status(200).json({
@@ -79,7 +80,7 @@ const server = http.createServer(async (req, res) => {
           state: "/api/state",
           claim: "/api/claim",
           adminApi: "/api/admin",
-          adminConsole: "/admin",
+          adminConsole: "/",
         },
       });
     }

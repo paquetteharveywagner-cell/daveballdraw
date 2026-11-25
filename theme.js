@@ -239,15 +239,24 @@
   }
 
   function getApiBase() {
+    const host = window.location.hostname;
+    if (host === "localhost" || host === "127.0.0.1") {
+      return "";
+    }
+    let configured = "";
     if (typeof window.RACEYS_API_BASE === "string" && window.RACEYS_API_BASE) {
-      return window.RACEYS_API_BASE.replace(/\/+$/, "");
+      configured = window.RACEYS_API_BASE.replace(/\/+$/, "");
+    } else {
+      const meta = document.querySelector('meta[name="api-base"]');
+      if (meta) {
+        const val = (meta.getAttribute("content") || "").trim();
+        if (val) configured = val.replace(/\/+$/, "");
+      }
     }
-    const meta = document.querySelector('meta[name="api-base"]');
-    if (meta) {
-      const val = (meta.getAttribute("content") || "").trim();
-      if (val) return val.replace(/\/+$/, "");
+    if (!configured || window.location.origin === configured) {
+      return "";
     }
-    return "";
+    return configured;
   }
 
   window.RACEYS_DEFAULT_THEME = DEFAULT_THEME;

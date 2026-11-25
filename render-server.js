@@ -9,6 +9,16 @@ const adminHandler = require("./api/admin");
 const PORT = Number(process.env.PORT) || 10000;
 const ROOT = __dirname;
 
+const BACKEND_ASSETS = new Map([
+  ["/admin", "admin.html"],
+  ["/admin.html", "admin.html"],
+  ["/admin.js", "admin.js"],
+  ["/theme.js", "theme.js"],
+  ["/styles.css", "styles.css"],
+  ["/assets/logo.jpg", "assets/logo.jpg"],
+  ["/favicon.ico", "assets/logo.jpg"],
+]);
+
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -58,6 +68,22 @@ const server = http.createServer(async (req, res) => {
   const wrappedRes = wrapResponse(res);
 
   try {
+    if (urlPath === "/" || urlPath === "/health") {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Cache-Control", "no-store");
+      return wrappedRes.status(200).json({
+        ok: true,
+        service: "raceys-lotto-backend",
+        message: "Raceys Lotto Bonus Ball backend is running.",
+        endpoints: {
+          state: "/api/state",
+          claim: "/api/claim",
+          adminApi: "/api/admin",
+          adminConsole: "/admin",
+        },
+      });
+    }
+
     if (
       urlPath === "/api/state" ||
       urlPath === "/api/claim" ||
@@ -71,17 +97,14 @@ const server = http.createServer(async (req, res) => {
       if (urlPath === "/api/admin") return await adminHandler(req, wrappedRes);
     }
 
-    let relPath = urlPath.replace(/^\/+/, "");
-    if (!relPath) relPath = "index.html";
-    else if (relPath === "admin") relPath = "admin.html";
-    else if (relPath === "favicon.ico") relPath = "assets/logo.jpg";
-
-    const fullPath = path.resolve(ROOT, relPath);
-    if (!fullPath.startsWith(ROOT + path.sep) && fullPath !== ROOT) {
-      res.statusCode = 403;
-      return res.end("Forbidden");
+    const mappedRel = BACKEND_ASSETS.get(urlPath);
+    if (!mappedRel) {
+      res.statusCode = 404;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      return res.end(JSON.stringify({ error: "Not Found" }));
     }
 
+    const fullPath = path.resolve(ROOT, mappedRel);
     fs.stat(fullPath, (err, stat) => {
       if (err || !stat.isFile()) {
         res.statusCode = 404;

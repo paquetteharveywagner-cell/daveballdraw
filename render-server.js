@@ -9,8 +9,10 @@ const adminHandler = require("./api/admin");
 const PORT = Number(process.env.PORT) || 10000;
 const ROOT = __dirname;
 
-const BACKEND_ASSETS = new Map([
-  ["/", "admin.html"],
+const PUBLIC_AND_ADMIN_ASSETS = new Map([
+  ["/", "index.html"],
+  ["/index.html", "index.html"],
+  ["/app.js", "app.js"],
   ["/admin", "admin.html"],
   ["/admin.html", "admin.html"],
   ["/admin.js", "admin.js"],
@@ -98,7 +100,7 @@ const server = http.createServer(async (req, res) => {
       if (urlPath === "/api/admin") return await adminHandler(req, wrappedRes);
     }
 
-    const mappedRel = BACKEND_ASSETS.get(urlPath);
+    const mappedRel = PUBLIC_AND_ADMIN_ASSETS.get(urlPath);
     if (!mappedRel) {
       res.statusCode = 404;
       res.setHeader("Content-Type", "application/json; charset=utf-8");

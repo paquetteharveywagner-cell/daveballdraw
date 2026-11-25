@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raceys Lotto Bonus Ball Draw – Pick your number</title>
+    <link rel="icon" type="image/jpeg" href="assets/logo.jpg" />
+    <meta name="api-base" content="" />
+    <meta name="theme-color" content="#0f3b2a" />
+    <meta
+      name="description"
+      content="Choose your bonus ball number from 1 to 45. €10 entry, €300 jackpot. Drawn on the Irish Lotto."
+    />
+    <meta property="og:title" content="Raceys Lotto Bonus Ball Draw" />
+    <meta
+      property="og:description"
+      content="Pick a number 1–45 for €10 and win the €300 jackpot."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="corner-logo" aria-label="Racey Byrnes logo">
+        <img
+          src="assets/logo.jpg"
+          alt="Racey Byrnes"
+          class="corner-logo-img"
+        />
+      </div>
+
+      <main class="main-container">
+        <header class="hero-header">
+          <p class="eyebrow">Raceys</p>
+          <h1 class="hero-title">
+            Lotto Bonus
+            <br />
+            Ball Draw
+          </h1>
+
+          <div class="stats-row">
+            <div class="stat-card stat-card--gold">
+              <svg
+                class="stat-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                <path d="M4 22h16" />
+                <path
+                  d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"
+                />
+                <path
+                  d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"
+                />
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+              </svg>
+              <span class="stat-label">Jackpot</span>
+              <span class="stat-value font-display">€300</span>
+            </div>
+
+            <div class="stat-card stat-card--dark">
+              <svg
+                class="stat-icon stat-icon--gold"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path
+                  d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"
+                />
+                <path d="M13 5v2" />
+                <path d="M13 17v2" />
+                <path d="M13 11v2" />
+              </svg>
+              <span class="stat-label stat-label--muted">Entry</span>
+              <span class="stat-value font-display">€10</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="progress-card" aria-label="Draw progress">
+          <div class="progress-meta">
+            <span id="sold-count" class="progress-sold">0 of 45 sold</span>
+            <span id="remaining-count" class="progress-left">45 left</span>
+          </div>
+          <div
+            class="progress-track"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="45"
+            aria-valuenow="0"
+            id="progress-bar"
+          >
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </section>
+
+        <section class="grid-section" aria-labelledby="pick-heading">
+          <div class="grid-header">
+            <h2 id="pick-heading" class="section-title">
+              Tap a number to pick it
+            </h2>
+            <p class="section-subtitle">
+              Gold balls are free. Faded ones are already taken.
+            </p>
+          </div>
+
+          <div class="ball-grid" id="ball-grid"></div>
+        </section>
+
+        <section class="how-card" aria-labelledby="how-heading">
+          <h2 id="how-heading" class="how-title">How it works</h2>
+          <ol class="how-list">
+            <li>Pick a free number and enter your name and mobile.</li>
+            <li class="how-revolut-item">
+              <span>Click</span>
+              <a
+                href="https://revolut.me/jamesclg7"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="revolut-icon-link"
+                aria-label="Pay €10 on Revolut"
+                title="Pay €10 on Revolut"
+              >
+                <svg
+                  class="revolut-svg"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <circle cx="16" cy="16" r="16" fill="#FFFFFF" />
+                  <path
+                    d="M11 8.5h6.1c3.25 0 5.4 1.85 5.4 4.65 0 2.08-1.15 3.63-3.05 4.28l3.55 6.07h-3.6l-3.15-5.55h-2.1V23.5H11V8.5Zm3.15 2.7v4.15h2.75c1.55 0 2.45-.75 2.45-2.08 0-1.33-.9-2.07-2.45-2.07h-2.75Z"
+                    fill="#191C1F"
+                  />
+                </svg>
+              </a>
+              <span>to pay €10 on Revolut.</span>
+            </li>
+            <li>The draw goes ahead once all 45 numbers are bought.</li>
+            <li>
+              If your number is the
+              <strong class="text-strong">bonus ball</strong> in the main Irish
+              Lotto draw, you win €300.
+            </li>
+          </ol>
+
+          <div class="whatsapp-row">
+            <span>For more info, contact</span>
+            <a
+              href="https://wa.me/qr/ODU3U5BBI2SNG1"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="whatsapp-icon-link"
+              aria-label="Contact us on WhatsApp"
+              title="Message on WhatsApp"
+            >
+              <svg
+                class="whatsapp-svg"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <circle cx="16" cy="16" r="16" fill="#25D366" />
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M16 6C10.48 6 6 10.48 6 16c0 1.88.52 3.64 1.43 5.14L6 26l5.02-1.32A9.94 9.94 0 0 0 16 26c5.52 0 10-4.48 10-10S21.52 6 16 6Zm0 18.2a8.18 8.18 0 0 1-4.18-1.15l-.3-.18-3.1.81.83-3.02-.2-.31A8.17 8.17 0 0 1 7.8 16c0-4.52 3.68-8.2 8.2-8.2 4.52 0 8.2 3.68 8.2 8.2 0 4.52-3.68 8.2-8.2 8.2Z"
+                  fill="#FFFFFF"
+                />
+                <path
+                  d="M20.47 18.14c-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.53.06-.24-.12-1.03-.38-1.97-1.22-.73-.65-1.22-1.45-1.36-1.69-.14-.24-.01-.37.11-.5.11-.11.24-.28.37-.43.12-.14.16-.24.24-.41.08-.16.04-.3-.02-.43-.06-.12-.55-1.31-.75-1.8-.2-.47-.4-.41-.55-.42h-.47c-.16 0-.43.06-.65.3-.22.24-.85.83-.85 2.03s.88 2.36 1 2.52c.12.16 1.73 2.64 4.19 3.7.58.25 1.04.4 1.4.52.59.19 1.12.16 1.54.1.47-.07 1.44-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.47-.28Z"
+                  fill="#FFFFFF"
+                />
+              </svg>
+            </a>
+          </div>
+
+          <div class="how-footer">
+            <svg
+              class="clock-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span>Best of luck!</span>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Claim / Payment Modal -->
+    <div
+      id="claim-modal-backdrop"
+      class="modal-backdrop hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="modal-card" id="modal-card">
+        <button
+          type="button"
+          class="modal-close"
+          id="modal-close-btn"
+          aria-label="Close modal"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+
+        <!-- Step 1: Enter Name & Mobile -->
+        <div id="step-claim" class="modal-step">
+          <div class="modal-ball-sm lotto-ball-picked font-display" id="claim-ball-badge">
+            1
+          </div>
+          <h2 id="modal-title" class="modal-heading">Claim number 1</h2>
+          <p class="modal-subtext">
+            €10 entry. Your mobile is only seen by the organiser.
+          </p>
+
+          <form id="claim-form" class="claim-form" novalidate>
+            <div class="field-group">
+              <label for="entry-name" class="field-label">Your name</label>
+              <input
+                id="entry-name"
+                name="name"
+                type="text"
+                class="field-input"
+                placeholder="e.g. Mary Byrne"
+                maxlength="60"
+                autocomplete="name"
+                required
+              />
+              <p id="error-name" class="field-error" aria-live="polite"></p>
+            </div>
+
+            <div class="field-group">
+              <label for="entry-mobile" class="field-label">Mobile number</label>
+              <input
+                id="entry-mobile"
+                name="mobile"
+                type="tel"
+                inputmode="tel"
+                class="field-input"
+                placeholder="087 123 4567"
+                maxlength="20"
+                autocomplete="tel"
+                required
+              />
+              <p id="error-mobile" class="field-error" aria-live="polite"></p>
+            </div>
+
+            <button
+              type="submit"
+              id="claim-submit-btn"
+              class="btn-gold-pill font-display"
+            >
+              <span id="claim-btn-text">Claim number 1</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Step 2: Pay €10 on Revolut -->
+        <div id="step-payment" class="modal-step modal-step--center hidden">
+          <svg
+            class="party-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5.8 11.3 2 22l10.7-3.79" />
+            <path d="M4 3h.01" />
+            <path d="M22 8h.01" />
+            <path d="M15 2h.01" />
+            <path d="M22 20h.01" />
+            <path
+              d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"
+            />
+            <path
+              d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"
+            />
+            <path
+              d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"
+            />
+            <path
+              d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"
+            />
+          </svg>
+
+          <h2 id="payment-heading" class="modal-heading">
+            Number 1 is yours!
+          </h2>
+          <p class="modal-subtext">
+            Now pay €10 on Revolut to lock it in. Put your name and number in
+            the payment note.
+          </p>
+
+          <div
+            class="modal-ball-lg lotto-ball-picked font-display"
+            id="payment-ball-badge"
+          >
+            1
+          </div>
+
+          <a
+            href="https://revolut.me/jamesclg7"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-gold-pill btn-revolut font-display"
+          >
+            <span>Pay €10 on Revolut</span>
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M15 3h6v6" />
+              <path d="M10 14 21 3" />
+              <path
+                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+              />
+            </svg>
+          </a>
+
+          <p class="revolut-handle">revolut.me/jamesclg7</p>
+
+          <button type="button" id="back-to-board-btn" class="btn-ghost">
+            Back to the board
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <script src="theme.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

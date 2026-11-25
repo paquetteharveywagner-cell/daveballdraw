@@ -1,0 +1,13 @@
+{
+  "name": "raceys-lotto-bonus-ball",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Raceys Lotto Bonus Ball Draw frontend and backend",
+  "main": "render-server.js",
+  "scripts": {
+    "start": "node render-server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

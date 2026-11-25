@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raceys Admin – Backend Console</title>
+    <link rel="icon" type="image/jpeg" href="assets/logo.jpg" />
+    <meta name="api-base" content="" />
+    <meta name="theme-color" content="#0f3b2a" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <header class="admin-topbar">
+        <div class="admin-brand">
+          <img
+            src="assets/logo.jpg"
+            alt="Racey Byrnes"
+            class="admin-logo-thumb"
+          />
+          <div>
+            <p class="eyebrow">Raceys Backend</p>
+            <h1 class="admin-title font-display">Draw &amp; Theme Control</h1>
+          </div>
+        </div>
+
+        <div class="admin-top-actions">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-outline-pill"
+          >
+            View Frontend
+          </a>
+          <button
+            type="button"
+            id="admin-logout-btn"
+            class="btn-outline-pill hidden"
+          >
+            Lock
+          </button>
+        </div>
+      </header>
+
+      <!-- Admin PIN Login -->
+      <section id="admin-login-section" class="admin-login-card">
+        <h2 class="modal-heading">Admin Sign In</h2>
+        <p class="modal-subtext">
+          Enter your admin PIN to refresh numbers and manage frontend colours.
+        </p>
+
+        <form id="admin-login-form" class="claim-form" novalidate>
+          <div class="field-group">
+            <label for="admin-pin-input" class="field-label">Admin PIN</label>
+            <input
+              id="admin-pin-input"
+              type="password"
+              class="field-input"
+              placeholder="Enter admin PIN"
+              autocomplete="current-password"
+              required
+            />
+            <p id="admin-pin-error" class="field-error" aria-live="polite"></p>
+          </div>
+
+          <button type="submit" id="admin-login-btn" class="btn-gold-pill font-display">
+            Unlock Backend
+          </button>
+        </form>
+      </section>
+
+      <!-- Admin Console -->
+      <div id="admin-dashboard" class="admin-grid hidden">
+        <!-- 1. Refresh Numbers Card -->
+        <section class="admin-card" aria-labelledby="numbers-heading">
+          <div class="admin-card-head">
+            <div>
+              <h2 id="numbers-heading" class="admin-card-title">
+                Ball Draw Numbers
+              </h2>
+              <p class="admin-card-desc" id="admin-draw-summary">
+                0 of 45 sold · 45 left
+              </p>
+            </div>
+
+            <button
+              type="button"
+              id="admin-refresh-all-btn"
+              class="btn-danger-pill"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+              <span>Refresh All Numbers</span>
+            </button>
+          </div>
+
+          <div class="entries-table-wrap">
+            <table class="entries-table" id="entries-table">
+              <thead>
+                <tr>
+                  <th>Ball</th>
+                  <th>Name</th>
+                  <th>Mobile</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="entries-tbody"></tbody>
+            </table>
+            <div id="entries-empty" class="empty-state">
+              No numbers claimed yet. All 45 balls are free.
+            </div>
+          </div>
+
+          <p class="storage-note" id="storage-mode-note"></p>
+        </section>
+
+        <!-- 2. Frontend Colour Manager Card -->
+        <section class="admin-card" aria-labelledby="theme-heading">
+          <div class="admin-card-head">
+            <div>
+              <h2 id="theme-heading" class="admin-card-title">
+                Frontend Colour Manager
+              </h2>
+              <p class="admin-card-desc">
+                Choose from 44 colour themes or pick custom colours for the live
+                draw page.
+              </p>
+            </div>
+            <span class="admin-badge" id="active-theme-badge">
+              Emerald &amp; Gold
+            </span>
+          </div>
+
+          <div class="preset-grid" id="preset-grid"></div>
+
+          <div class="custom-color-row">
+            <div class="color-field">
+              <label for="color-bg" class="field-label">Background</label>
+              <div class="color-picker-wrap">
+                <input
+                  id="color-bg"
+                  type="color"
+                  class="color-input"
+                  value="#0f3b2a"
+                />
+                <span class="color-hex" id="color-bg-hex">#0f3b2a</span>
+              </div>
+            </div>
+
+            <div class="color-field">
+              <label for="color-surface" class="field-label">Cards</label>
+              <div class="color-picker-wrap">
+                <input
+                  id="color-surface"
+                  type="color"
+                  class="color-input"
+                  value="#154634"
+                />
+                <span class="color-hex" id="color-surface-hex">#154634</span>
+              </div>
+            </div>
+
+            <div class="color-field">
+              <label for="color-accent" class="field-label">Balls &amp; Accent</label>
+              <div class="color-picker-wrap">
+                <input
+                  id="color-accent"
+                  type="color"
+                  class="color-input"
+                  value="#f4c430"
+                />
+                <span class="color-hex" id="color-accent-hex">#f4c430</span>
+              </div>
+            </div>
+
+            <div class="color-field">
+              <button
+                type="button"
+                id="apply-custom-theme-btn"
+                class="btn-danger-pill"
+              >
+                Apply Custom Colours
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Confirm Refresh Modal -->
+    <div
+      id="admin-refresh-modal"
+      class="modal-backdrop hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="admin-refresh-title"
+    >
+      <div class="modal-card modal-step--center">
+        <h2 id="admin-refresh-title" class="modal-heading">
+          Refresh all numbers?
+        </h2>
+        <p class="modal-subtext">
+          This clears all claimed numbers and resets the public ball draw back
+          to 0 of 45 sold.
+        </p>
+
+        <div class="confirm-actions">
+          <button
+            type="button"
+            id="confirm-admin-refresh-btn"
+            class="btn-gold-pill font-display"
+          >
+            Yes, Refresh Numbers
+          </button>
+          <button
+            type="button"
+            id="cancel-admin-refresh-btn"
+            class="btn-ghost"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <script src="theme.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

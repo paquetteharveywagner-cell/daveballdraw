@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: raceys-lotto-backend
+    runtime: node
+    plan: free
+    buildCommand: ""
+    startCommand: npm start
+    healthCheckPath: /api/state
+    envVars:
+      - key: ADMIN_PIN
+        value: raceys2026

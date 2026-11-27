@@ -17,6 +17,8 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       entries: toPublicEntries(state.entries),
       theme: state.theme,
+      refreshVersion: state.refreshVersion,
+      lastRefreshedAt: state.lastRefreshedAt,
     });
   } catch {
     return res.status(500).json({ error: "Failed to load draw state" });

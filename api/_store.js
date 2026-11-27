@@ -17,6 +17,8 @@ function createDefaultState() {
   return {
     entries: {},
     theme: { ...DEFAULT_THEME },
+    refreshVersion: 1,
+    lastRefreshedAt: null,
   };
 }
 
@@ -42,6 +44,7 @@ function getStorageMode() {
 function normalizeState(raw) {
   const base = createDefaultState();
   if (!raw || typeof raw !== "object") return base;
+  const refreshVersion = Number(raw.refreshVersion);
   return {
     entries:
       raw.entries && typeof raw.entries === "object" && !Array.isArray(raw.entries)
@@ -68,6 +71,12 @@ function normalizeState(raw) {
                 : DEFAULT_THEME.accentHex,
           }
         : { ...DEFAULT_THEME },
+    refreshVersion:
+      Number.isInteger(refreshVersion) && refreshVersion >= 1
+        ? refreshVersion
+        : 1,
+    lastRefreshedAt:
+      typeof raw.lastRefreshedAt === "string" ? raw.lastRefreshedAt : null,
   };
 }
 

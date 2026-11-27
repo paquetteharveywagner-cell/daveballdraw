@@ -36,6 +36,8 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({
         entries: state.entries,
         theme: state.theme,
+        refreshVersion: state.refreshVersion,
+        lastRefreshedAt: state.lastRefreshedAt,
         storageMode: getStorageMode(),
       });
     }
@@ -49,11 +51,15 @@ module.exports = async function handler(req, res) {
 
     if (body.action === "refresh") {
       state.entries = {};
+      state.refreshVersion = (Number(state.refreshVersion) || 1) + 1;
+      state.lastRefreshedAt = new Date().toISOString();
       const saved = await writeState(state);
       return res.status(200).json({
         ok: true,
         entries: saved.entries,
         theme: saved.theme,
+        refreshVersion: saved.refreshVersion,
+        lastRefreshedAt: saved.lastRefreshedAt,
       });
     }
 
@@ -68,6 +74,8 @@ module.exports = async function handler(req, res) {
         ok: true,
         entries: saved.entries,
         theme: saved.theme,
+        refreshVersion: saved.refreshVersion,
+        lastRefreshedAt: saved.lastRefreshedAt,
       });
     }
 
@@ -95,6 +103,8 @@ module.exports = async function handler(req, res) {
         ok: true,
         entries: saved.entries,
         theme: saved.theme,
+        refreshVersion: saved.refreshVersion,
+        lastRefreshedAt: saved.lastRefreshedAt,
       });
     }
 

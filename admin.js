@@ -189,13 +189,16 @@
 
     if (data.storageMode === "kv") {
       storageModeNoteEl.textContent =
-        "Storage: Persistent cloud KV connected.";
+        "Storage: Persistent cloud Redis connected.";
     } else if (data.storageMode === "file") {
-      storageModeNoteEl.textContent =
-        "Storage: Local server file (data/state.json).";
+      storageModeNoteEl.textContent = window.location.hostname.endsWith(
+        ".onrender.com"
+      )
+        ? "Storage: Render local file (resets if free instance sleeps/redeploys). Add UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN in Render Environment Variables for permanent storage."
+        : "Storage: Local server file (data/state.json).";
     } else {
       storageModeNoteEl.textContent =
-        "Storage: Serverless memory mode. Connect Upstash Redis / Vercel KV in Vercel Storage for permanent multi-device persistence.";
+        "Storage: Serverless memory mode. Connect Upstash Redis / Vercel KV for permanent multi-device persistence.";
     }
   }
 

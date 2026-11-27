@@ -33,9 +33,16 @@
   const backToBoardBtn = document.getElementById("back-to-board-btn");
   const toastContainer = document.getElementById("toast-container");
 
+  const isHttpOrigin =
+    window.location.protocol === "http:" ||
+    window.location.protocol === "https:";
+
   let selectedNumber = null;
   let isSubmitting = false;
-  let entries = loadLocalEntries();
+  let entries = isHttpOrigin ? {} : loadLocalEntries();
+  let lastEntriesSnapshot = null;
+  let lastThemeSnapshot = null;
+  let lastRefreshVersion = loadLocalRefreshVersion();
 
   function loadLocalEntries() {
     try {
@@ -73,24 +80,70 @@
     }
   }
 
-  async function syncFromBackend(animate = false) {
+  function loadLocalRefreshVersion() {
+    try {
+      const v = Number(localStorage.getItem("raceys_refresh_version_v1"));
+      return Number.isInteger(v) && v >= 1 ? v : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveLocalRefreshVersion(version) {
+    try {
+      localStorage.setItem("raceys_refresh_version_v1", String(version));
+    } catch {
+      // Ignore storage errors
+    }
+  }
+
+  function serializeEntries(map) {
+    const keys = Object.keys(map || {}).sort((a, b) => Number(a) - Number(b));
+    return JSON.stringify(
+      keys.map((k) => [k, map[k] && map[k].firstName ? map[k].firstName : ""])
+    );
+  }
+
+  async function syncFromBackend(forceAnimate = false) {
+    if (!modalBackdrop.classList.contains("hidden") || isSubmitting) {
+      return;
+    }
     try {
       const res = await fetch(`${API_BASE}/api/state`, { cache: "no-store" });
       if (!res.ok) return;
       const state = await res.json();
-      if (state && typeof state === "object") {
-        if (state.entries && typeof state.entries === "object") {
+      if (!state || typeof state !== "object") return;
+
+      const serverVersion = Number(state.refreshVersion) || 1;
+      const wasAdminRefresh =
+        lastRefreshVersion !== null && serverVersion > lastRefreshVersion;
+
+      if (state.entries && typeof state.entries === "object") {
+        const nextSnapshot = serializeEntries(state.entries);
+        if (wasAdminRefresh || nextSnapshot !== lastEntriesSnapshot) {
           entries = state.entries;
+          lastEntriesSnapshot = nextSnapshot;
           saveLocalEntries(entries);
-          renderBoard(animate);
+          renderBoard(forceAnimate || wasAdminRefresh);
         }
-        if (state.theme && typeof window.applyRaceysTheme === "function") {
+      }
+
+      if (wasAdminRefresh) {
+        showToast("Draw board refreshed by admin.");
+      }
+      lastRefreshVersion = serverVersion;
+      saveLocalRefreshVersion(serverVersion);
+
+      if (state.theme && typeof window.applyRaceysTheme === "function") {
+        const nextThemeSnapshot = JSON.stringify(state.theme);
+        if (nextThemeSnapshot !== lastThemeSnapshot) {
           const applied = window.applyRaceysTheme(state.theme);
+          lastThemeSnapshot = nextThemeSnapshot;
           saveLocalTheme(applied);
         }
       }
     } catch {
-      // Fall back to local state if backend is unreachable
+      // Keep current state cleanly if backend is temporarily unreachable
     }
   }
 
@@ -282,44 +335,51 @@
     let firstName = validated.name.split(" ")[0];
     let claimedAt = new Date().toISOString();
 
-    try {
-      const res = await fetch(`${API_BASE}/api/claim`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          number: numberToClaim,
-          name: validated.name,
-          mobile: validated.mobile,
-        }),
-      });
+    if (isHttpOrigin) {
+      try {
+        const res = await fetch(`${API_BASE}/api/claim`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            number: numberToClaim,
+            name: validated.name,
+            mobile: validated.mobile,
+          }),
+        });
 
-      if (res.status === 409) {
-        showToast(
-          `Sorry, number ${numberToClaim} was just taken. Please pick another.`
-        );
-        closeModal();
-        await syncFromBackend(false);
-        return;
-      }
+        if (res.status === 409) {
+          showToast(
+            `Sorry, number ${numberToClaim} was just taken. Please pick another.`
+          );
+          closeModal();
+          await syncFromBackend(false);
+          return;
+        }
 
-      if (res.ok) {
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          showToast(
+            err.error || "Could not save your number. Please try again."
+          );
+          setSubmitting(false);
+          return;
+        }
+
         const data = await res.json();
         firstName = data.firstName || firstName;
         claimedAt = data.claimedAt || claimedAt;
-      } else if (res.status === 400) {
-        const err = await res.json().catch(() => ({}));
-        showToast(err.error || "Please check your details and try again.");
+      } catch {
+        showToast("Server is waking up or unreachable. Please tap Claim again.");
         setSubmitting(false);
         return;
       }
-    } catch {
-      // Static fallback when /api/claim is unreachable
     }
 
     entries[key] = {
       firstName,
       claimedAt,
     };
+    lastEntriesSnapshot = serializeEntries(entries);
     saveLocalEntries(entries);
     renderBoard(false);
     setSubmitting(false);
@@ -345,8 +405,10 @@
     }
   });
 
-  window.addEventListener("focus", () => {
-    syncFromBackend(false);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      syncFromBackend(false);
+    }
   });
 
   const cachedTheme = loadLocalTheme();
@@ -354,9 +416,12 @@
     window.applyRaceysTheme(cachedTheme);
   }
 
+  lastEntriesSnapshot = serializeEntries(entries);
   renderBoard(true);
   syncFromBackend(false);
   setInterval(() => {
-    syncFromBackend(false);
-  }, 15000);
+    if (!document.hidden) {
+      syncFromBackend(false);
+    }
+  }, 10000);
 })();

@@ -54,7 +54,7 @@ function Read-DrawState {
   try {
     $raw = Get-Content -Path $stateFile -Raw -Encoding UTF8
     if ([string]::IsNullOrWhiteSpace($raw)) {
-      return @{ entries = @{}; theme = $defaultTheme.Clone() }
+      return @{ entries = @{}; theme = $defaultTheme.Clone(); refreshVersion = 1; lastRefreshedAt = $null }
     }
     $parsed = $raw | ConvertFrom-Json
     $entries = if ($null -ne $parsed.entries) { ConvertTo-Hashtable $parsed.entries } else { @{} }
@@ -65,16 +65,20 @@ function Read-DrawState {
       surfaceHex    = if ($themeRaw.ContainsKey("surfaceHex")) { [string]$themeRaw["surfaceHex"] } else { $defaultTheme.surfaceHex }
       accentHex     = if ($themeRaw.ContainsKey("accentHex")) { [string]$themeRaw["accentHex"] } else { $defaultTheme.accentHex }
     }
-    return @{ entries = $entries; theme = $theme }
+    $rv = if ($null -ne $parsed.refreshVersion -and [int]$parsed.refreshVersion -ge 1) { [int]$parsed.refreshVersion } else { 1 }
+    $lra = if ($null -ne $parsed.lastRefreshedAt) { [string]$parsed.lastRefreshedAt } else { $null }
+    return @{ entries = $entries; theme = $theme; refreshVersion = $rv; lastRefreshedAt = $lra }
   } catch {
-    return @{ entries = @{}; theme = $defaultTheme.Clone() }
+    return @{ entries = @{}; theme = $defaultTheme.Clone(); refreshVersion = 1; lastRefreshedAt = $null }
   }
 }
 
 function Write-DrawState([hashtable]$state) {
   $payload = @{
-    entries = $state.entries
-    theme   = $state.theme
+    entries         = $state.entries
+    theme           = $state.theme
+    refreshVersion  = if ($state.refreshVersion) { [int]$state.refreshVersion } else { 1 }
+    lastRefreshedAt = $state.lastRefreshedAt
   }
   $json = $payload | ConvertTo-Json -Depth 6
   $json | Set-Content -Path $stateFile -Encoding UTF8
@@ -126,8 +130,10 @@ try {
           }
         }
         Send-Json $response 200 @{
-          entries = $publicEntries
-          theme   = $state.theme
+          entries         = $publicEntries
+          theme           = $state.theme
+          refreshVersion  = $state.refreshVersion
+          lastRefreshedAt = $state.lastRefreshedAt
         }
         continue
       }
@@ -198,9 +204,11 @@ try {
 
         if ($request.HttpMethod -eq "GET") {
           Send-Json $response 200 @{
-            entries     = $state.entries
-            theme       = $state.theme
-            storageMode = "file"
+            entries         = $state.entries
+            theme           = $state.theme
+            refreshVersion  = $state.refreshVersion
+            lastRefreshedAt = $state.lastRefreshedAt
+            storageMode     = "file"
           }
           continue
         }
@@ -217,11 +225,15 @@ try {
 
         if ($body.action -eq "refresh") {
           $state.entries = @{}
+          $state.refreshVersion = ([int]$state.refreshVersion) + 1
+          $state.lastRefreshedAt = (Get-Date).ToUniversalTime().ToString("o")
           Write-DrawState $state
           Send-Json $response 200 @{
-            ok      = $true
-            entries = $state.entries
-            theme   = $state.theme
+            ok              = $true
+            entries         = $state.entries
+            theme           = $state.theme
+            refreshVersion  = $state.refreshVersion
+            lastRefreshedAt = $state.lastRefreshedAt
           }
           continue
         }
@@ -235,9 +247,11 @@ try {
           $state.entries.Remove([string]$num) | Out-Null
           Write-DrawState $state
           Send-Json $response 200 @{
-            ok      = $true
-            entries = $state.entries
-            theme   = $state.theme
+            ok              = $true
+            entries         = $state.entries
+            theme           = $state.theme
+            refreshVersion  = $state.refreshVersion
+            lastRefreshedAt = $state.lastRefreshedAt
           }
           continue
         }
@@ -257,9 +271,11 @@ try {
           }
           Write-DrawState $state
           Send-Json $response 200 @{
-            ok      = $true
-            entries = $state.entries
-            theme   = $state.theme
+            ok              = $true
+            entries         = $state.entries
+            theme           = $state.theme
+            refreshVersion  = $state.refreshVersion
+            lastRefreshedAt = $state.lastRefreshedAt
           }
           continue
         }
